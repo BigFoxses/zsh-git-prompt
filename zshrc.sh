@@ -44,14 +44,29 @@ update_current_git_vars() {
     GIT_UPSTREAM=$__CURRENT_GIT_STATUS[10]
     GIT_MERGING=$__CURRENT_GIT_STATUS[11]
     GIT_REBASE=$__CURRENT_GIT_STATUS[12]
+
+    GIT_WORKTREE=
+    local first=yes
+    git worktree list --porcelain | while read k v; do
+        if [ worktree = "$k" -a X"${PWD#$v}" != X"$PWD" -a -z "$first" ]; then
+            GIT_WORKTREE="$v"
+            break
+        fi
+        first=
+    done
 }
 
 git_super_status() {
     precmd_update_git_vars
 
     if [ -n "$__CURRENT_GIT_STATUS" ]; then
-        local STATUS="$ZSH_THEME_GIT_PROMPT_PREFIX$ZSH_THEME_GIT_PROMPT_BRANCH$GIT_BRANCH%{${reset_color}%}"
-        local clean=1
+        local STATUS="$ZSH_THEME_GIT_PROMPT_PREFIX" clean=1
+        if [ -n "$GIT_WORKTREE" ]; then
+            STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_WORKTREE_BRANCH"
+        else
+            STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_BRANCH"
+        fi
+        STATUS="$STATUS$GIT_BRANCH%{${reset_color}%}"
 
         if [ -n "$GIT_REBASE" ] && [ "$GIT_REBASE" != "0" ]; then
             STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_REBASE$GIT_REBASE%{${reset_color}%}"
@@ -135,6 +150,7 @@ ZSH_THEME_GIT_PROMPT_SUFFIX="]"
 ZSH_THEME_GIT_PROMPT_HASH_PREFIX=":"
 ZSH_THEME_GIT_PROMPT_SEPARATOR="|"
 ZSH_THEME_GIT_PROMPT_BRANCH="%{$fg_bold[magenta]%}"
+ZSH_THEME_GIT_PROMPT_WORKTREE_BRANCH="%{$fg_bold[yellow]%}"
 ZSH_THEME_GIT_PROMPT_STAGED="%{$fg[red]%}%{●%G%}"
 ZSH_THEME_GIT_PROMPT_CONFLICTS="%{$fg[red]%}%{✖%G%}"
 ZSH_THEME_GIT_PROMPT_CHANGED="%{$fg[blue]%}%{✚%G%}"
