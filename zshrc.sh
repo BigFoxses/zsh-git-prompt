@@ -3,7 +3,7 @@
 # see documentation at http://linux.die.net/man/1/zshexpn
 preexec_update_git_vars() {
     case "$2" in
-    git*|hub*|gh*|stg*)
+    'git '*|'hub '*|'gh '*|'stg '*|'g '*|'g')
         __EXECUTED_GIT_COMMAND=1
         ;;
     esac
