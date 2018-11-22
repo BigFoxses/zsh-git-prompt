@@ -46,14 +46,16 @@ update_current_git_vars() {
     GIT_REBASE=$__CURRENT_GIT_STATUS[12]
 
     GIT_WORKTREE=
-    local first=yes
-    git worktree list --porcelain | while read k v; do
-        if [ worktree = "$k" -a X"${PWD#$v}" != X"$PWD" -a -z "$first" ]; then
-            GIT_WORKTREE="$v"
-            break
-        fi
-        first=
-    done
+    if [ -n "$__CURRENT_GIT_STATUS" ]; then
+        local first=yes
+        git worktree list --porcelain | while read k v; do
+            if [ worktree = "$k" -a X"${PWD#$v}" != X"$PWD" -a -z "$first" ]; then
+                GIT_WORKTREE="$v"
+                break
+            fi
+            first=
+        done
+    fi
 }
 
 git_super_status() {
