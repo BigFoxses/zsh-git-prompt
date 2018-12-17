@@ -94,7 +94,7 @@ def parse_branch(branch, head_file):
         with open(head_file) as fin:
             branch = SYM_PREHASH + fin.read().strip()[:7]
         local = 0
-    elif branch.startswith('Initial commit') or branch.startswith('No commits yet'):
+    if branch.startswith('Initial commit') or branch.startswith('No commits yet'):
         branch = branch.split(' ')[-1]
 
     return branch, upstream, local
